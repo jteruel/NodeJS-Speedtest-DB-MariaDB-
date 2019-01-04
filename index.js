@@ -1,10 +1,11 @@
-var speedTest = require('speedtest-net');
-var test = speedTest({maxTime: 5000});
+var express = require('express');
+var app = express();
+var http = require('http');
+var server = http.createServer(app);
  
-test.on('data', data => {
-  console.dir(data);
+// routing
+app.get('/', function (req, res) {
+	res.sendFile(__dirname + '/index.html');
 });
- 
-test.on('error', err => {
-  console.error(err);
-});
+
+server.listen(3000); 
