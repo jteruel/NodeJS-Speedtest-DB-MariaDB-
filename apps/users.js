@@ -1,1 +1,0 @@
-connection = require('./connection.js');

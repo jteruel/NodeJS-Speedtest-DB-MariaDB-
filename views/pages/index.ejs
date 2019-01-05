@@ -14,8 +14,8 @@
 <main>
     <div class="jumbotron">
         <h1>This is great</h1>
-         <% result.forEach(function(results) { %>
-           <li><%= result.date %> </li>
+         <% results.forEach(function(result) { %>
+           <li><%= result.date %>/ Upload:<%= result.upload %>/ Download:<%= result.download %></li>
          <% }); %>
     </div>
 </main>
