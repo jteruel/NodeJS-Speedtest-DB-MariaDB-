@@ -1,21 +1,22 @@
 var express = require('express');
 var app = express();
 var http = require('http');
-var server = http.createServer(app); 
+var server = http.createServer(app);
 connection = require('./connection.js');
-
+records = require('./apps/records.js');
+var speedTest = require('speedtest-net');
+var test = speedTest({maxTime: 5000}); 
 // routing
 app.get('/', function (req, res) {
-	res.sendFile(__dirname + '/templates/index.html');
+	 res.send(records.records);
 });
 
-connection.connect(function(err) {
-    if (err) {
-        console.error('Error:- ' + err.stack);
-        return;
-    }
-     
-    console.log('Connected Id:- ' + connection.threadId);
+app.get('/get-record', function(req, res) {
+
+	res.send(records.get_record);
+	//return redirect to homepag
+
 });
+ 
 
 server.listen(3000); 

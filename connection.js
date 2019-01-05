@@ -3,11 +3,11 @@ var mysql = require('mysql');
 var db = require('./database.json');
 
 connection = mysql.createConnection({
-	  host: "localhost",
-	  user: "root",
-	  password: "",
-	  database: "speedtest_synology",
-	  port: "3306",
+	  host: db.dev.host,
+	  user: db.dev.user,
+	  password: db.dev.password,
+	  database: db.dev.database,
+	  port: db.dev.port,
 	});
 
 module.exports = connection;

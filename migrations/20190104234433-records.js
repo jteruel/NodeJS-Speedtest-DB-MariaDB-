@@ -16,16 +16,13 @@ exports.setup = function(options, seedLink) {
 
 exports.up = function (db, callback) {
   db.createTable('records', {
-    id: { type: 'int', primaryKey: true }, 
-    date: { type: 'datetime' },
+    id: { type: 'int', primaryKey: true, autoIncrement: true },
+    date: { type: 'datetime', defaultValue: 'CURRENT_TIMESTAMP' }, 
     isp: { type:'string'},
-    isp_provider: { type:'string'},
-    isp_lat: { type:'float(10,6)'},
-    isp_long: { type:'float(10,6)'},
+    isp_server: { type:'string'},
+    isp_client: { type:'string'}, 
     upload: { type:'string'},
-    download: { type:'string'},
-    unadjusted_upload: { type:'string'},
-    unadjusted_download: { type:'string'},
+    download: { type:'string'}, 
 
   }, callback);
 };
