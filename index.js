@@ -5,7 +5,7 @@ var server = http.createServer(app);
  
 // routing
 app.get('/', function (req, res) {
-	res.sendFile(__dirname + '/index.html');
+	res.sendFile(__dirname + '/templates/index.html');
 });
 
 server.listen(3000); 
