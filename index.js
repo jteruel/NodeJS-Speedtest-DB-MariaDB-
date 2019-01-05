@@ -4,17 +4,28 @@ var http = require('http');
 var server = http.createServer(app);
 var speedTest = require('speedtest-net');
 var test = speedTest({maxTime: 5000});  
-connection = require('./connection.js');  
-var bodyParser = require('body-parser');  
+var connection = require('./connection.js');  
+var bodyParser = require('body-parser'); 
+var session = require('express-session')
 
 app.set('view engine', 'ejs'); 
 
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json()); 
+
+app.use(session({
+  secret: 'keyboard cat',
+  resave:true,
+  resave: false,
+  saveUninitialized: true, 
+}));
+
 // routing
 //Home
-app.get('/', function (req, res) {
-	connection.query("SELECT * FROM records ORDER BY date DESC", function (err, rows, fields) {
+app.get('/', function (req, res) { 
+	sql = "SELECT * FROM records ORDER BY date DESC"
+	console.log(req.session);
+	connection.query(sql, function (err, rows, fields) {
     		if (err) throw err; 
     		 	
     		res.render('pages/index', { results:rows });  
@@ -53,32 +64,26 @@ app.get('/outages', function(req, res) {
 
 //Search Filter reports by days - between 
 app.post('/filter-reports', function(req, res) {
-	var start_date = req.body.start;
-	var end_date = req.body.end;
-
- 	if (start | end) { 
-		connection.query("SELECT * FROM records WHERE (date BETWEEN '"+start+"' AND '"+end+"')", function (err, result) {
-	    	if (err) throw err; 
-        	console.log(result);
-   		});
-	} if (!(end)) {
-		connection.query("SELECT * FROM records WHERE date '"+start+"'", function (err, result) {
-	    	if (err) throw err; 
-        	console.log(result);
-   		});	
-
-	} else {
-		connection.query("SELECT * FROM records WHERE date '"+end+"'", function (err, result) {
-	    	if (err) throw err; 
-        	console.log(result);
-   		});	
-	}; 
+	var start = req.body.start;
+	var end = req.body.end;
+ 	//add to session data  
+ 	req.session.start = start; 
+ 	req.session.end = end;
+    //redirect to home
+	res.redirect('/');  
+ 
 });
 
 //Search Filter outages by days - between
 app.get('/filter-outages', function(req, res) {
 	console.log("hello");
 });
- 
+
+//LOGIN MATCH
+
+
+//LOGOUT
+
+
 
 server.listen(3000); 
