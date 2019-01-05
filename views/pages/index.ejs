@@ -12,9 +12,24 @@
 </header>
 
 <main>
-    <div class="jumbotron">
-        <h1>Current Reading:</h1>
-        <h3><b>Download:</b> <%= results[0].download %> / <b>Upload:</b> <%= results[0].upload %> </h3>
+    <div>
+        <div class="row">
+          <div class="col-md-6">
+            <h2>Current Reading:</h2>
+            
+          </div> 
+          <div class="col-md-6">
+          <% if(!(results[0].download)) { %> 
+              <h1>OUTAGE - Internet Down</h1>
+          <% } else{ %>
+               <h3><b>Download:</b> <%= results[0].download %> / <b>Upload:</b> <%= results[0].upload %></h3>
+              <h5><%= results[0].date %> </h5>
+          <% }  %>
+
+ 
+              
+          </div> 
+        </div> 
         <hr>
 
         <form method="post" action="/filter-reports"> 
@@ -33,7 +48,7 @@
 			   Start <input id="start" name="start" class="flatpickr">
 			   End <input id="end" name="end" class="flatpickr">
 
-			     <input type="submit" value="Go"/>
+			     <input type="submit" value="Go" class="btn btn-primary btn-md"/>
 			    
 
 			</form>
