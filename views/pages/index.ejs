@@ -17,7 +17,7 @@
         <h3><b>Download:</b> <%= results[0].download %> / <b>Upload:</b> <%= results[0].upload %> </h3>
         <hr>
 
-        <form method="POST" enctype="multipart/form-data"> 
+        <form method="post" action="/filter-reports"> 
 			   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
@@ -34,7 +34,7 @@ Usage
 			   Start <input id="start" name="start" class="flatpickr">
 			   End <input id="end" name="end" class="flatpickr">
 
-			    <a href="#" class="btn btn-md btn-danger">Go</a> 
+			     <input type="submit" value="Go"/>
 			    
 
 			</form>
@@ -42,7 +42,7 @@ Usage
         <hr>
         <p>Last 20 Readings</p>
          <% results.forEach(function(result) { %>
-           <li><%= result.date %>/ Upload:<%= result.upload %>/ Download:<%= result.download %></li>
+           <li><%= result.date %>/ <b>Upload:</b> <%= result.upload %>/ <b>Download:</b> <%= result.download %></li>
          <% }); %>
     </div>
 </main>
