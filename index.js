@@ -8,16 +8,18 @@ connection = require('./connection.js');
 
 app.set('view engine', 'ejs');
 // routing
+//Home
 app.get('/', function (req, res) {
 	connection.connect(function(err) {
 		if (err) throw err; 
 		connection.query("SELECT * FROM records ORDER BY date DESC", function (err, rows, fields) {
     		if (err) throw err; 
-    		res.render('pages/index', { results:rows });
+    		 
+    		res.render('pages/index', { results:rows }); 
   		});
     });  
 });
-
+//Get a record reading
 app.get('/get-record', function(req, res) {
 
 	test.on('data', data => { 
@@ -32,12 +34,32 @@ app.get('/get-record', function(req, res) {
 		connection.query(sql, function (err, result) {
 			if (err) throw err;
 	    	console.log("1 record inserted");
-
 	    	//redirect to home
-	    	res.redirect('/');
+	    	res.redirect('/'); 
 		});
 	});
 });
- 
+
+//Get all outage reports
+app.get('/outages', function(req, res) {
+	connection.connect(function(err) {
+		if (err) throw err; 
+		connection.query("SELECT * FROM outages ORDER BY date DESC", function (err, rows, fields) {
+    		if (err) throw err; 
+    		res.render('pages/outages', { results:rows });
+  		});
+    });  
+});
+
+//Search Filter reports by days - between 
+app.get('/filter-reports', function(req, res) {
+	console.log("hello");
+});
+
+//Search Filter outages by days - between
+app.get('/filter-outages', function(req, res) {
+	console.log("hello");
+});
+
 
 server.listen(3000); 
