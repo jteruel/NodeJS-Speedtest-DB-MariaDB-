@@ -23,15 +23,47 @@ app.use(session({
 // routing
 //Home
 app.get('/', function (req, res) { 
-	sql = "SELECT * FROM records ORDER BY date DESC"
-	console.log(req.session);
+
+	sql = "SELECT * FROM records ORDER BY date DESC";
+
 	connection.query(sql, function (err, rows, fields) {
-    		if (err) throw err; 
-    		 	
-    		res.render('pages/index', { results:rows });  
+    	if (err) throw err; 
+    	res.render('pages/index', { results:rows });  
   	});
  
 });
+
+//Records
+app.get('/search-records', function (req, res) { 
+
+	start = req.session.start;
+	end = req.session.end;
+	//if start and no end
+    if (start && (!(end))) {
+		sql = "SELECT * FROM records WHERE date ='"+start+"' ORDER BY date DESC";
+	} 
+	//if end but no start
+	if(end && (!(start))) {
+		sql = "SELECT * FROM records WHERE date ='"+end+"' ORDER BY date DESC";	
+	} 
+	//if both start and end
+	if(start && end) {
+		sql = "SELECT * FROM records WHERE (date BETWEEN '"+start+"' AND '"+end+"') ORDER BY date DESC";
+	};
+
+	if( (!(start)) && (!(end))) {
+		sql = "SELECT * FROM records ORDER BY date DESC";
+	};
+
+	
+
+	connection.query(sql, function (err, rows, fields) {
+    	if (err) throw err; 
+    	res.render('pages/search-records', { results:rows });  
+  	});
+ 
+});
+
 //Get a record reading
 //Note: Consider using a separate file to use cron tasks to execute this task
 app.get('/get-record', function(req, res) {
@@ -70,7 +102,7 @@ app.post('/filter-reports', function(req, res) {
  	req.session.start = start; 
  	req.session.end = end;
     //redirect to home
-	res.redirect('/');  
+	res.redirect('/search-records');  
  
 });
 
