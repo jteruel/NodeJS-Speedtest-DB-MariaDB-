@@ -5,8 +5,8 @@ connection = require('../connection.js');
 records = connection.connect(function( err) {
 	if (err) throw err; 
 	connection.query("SELECT * FROM records", function (err, result, fields) {
-    	if (err) throw err;
-    	console.log(result);
+    	if (err) throw err; 
+    	return result;
   	});
 }); 
 
