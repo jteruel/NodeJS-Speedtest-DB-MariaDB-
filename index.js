@@ -6,7 +6,8 @@ var speedTest = require('speedtest-net');
 var test = speedTest({maxTime: 5000});  
 var connection = require('./connection.js');  
 var bodyParser = require('body-parser'); 
-var session = require('express-session')
+var session = require('express-session');
+var moment = require('moment');
 
 app.set('view engine', 'ejs'); 
 
@@ -19,6 +20,9 @@ app.use(session({
   resave: false,
   saveUninitialized: true, 
 }));
+
+//establish today
+current_time =moment().format('YYYY-MM-DD'); 
 
 // routing
 //Home
@@ -33,7 +37,8 @@ app.get('/', function (req, res) {
  
 });
 
-//Records
+//RECORDS
+//search all records
 app.get('/search-records', function (req, res) { 
 
 	start = req.session.start;
@@ -125,13 +130,42 @@ app.get('/search-records', function (req, res) {
  
 });
 
-
+//Outages
 //Check if there are two outages in a day
+//run at the end of each day
+app.get('/outage-check', function(req, res) { 
+	current = current_time;
+	connection.query("SELECT * FROM records WHERE isp IS NULL", function (err, rows, fields) {
+    	if (err) throw err;  
+		if(rows.length > 0) {
+			//for each result of a outage, input to database
+			rows.forEach(function(row) {
+				date = row.date;  
+				//convert the row date to timestamp format
+				newdate = moment(date).format('YYYY-MM-DD HH:mm:ss'); 
+				//input to database
+				sql = "INSERT INTO outages (date) VALUES ('"+newdate+"')"; 
+					connection.query(sql, function (err, result) {
+					if (err) throw err;
+    				console.log("1 record inserted");
+    				//redirect to home
+    				res.redirect('/outages'); 
+				}); 
+
+			});
+		} else {
+			//none found, return to home
+			res.redirect('/outages');  
+    	}
+  	})
+});
+
+
 //Get all outage reports
 app.get('/outages', function(req, res) {
 	connection.query("SELECT * FROM outages ORDER BY date DESC", function (err, rows, fields) {
-    		if (err) throw err; 
-    		res.render('pages/outages', { results:rows });
+		if (err) throw err; 
+		res.render('pages/outages', { results:rows });
   	});
 });
 
