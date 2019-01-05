@@ -55,8 +55,6 @@ app.get('/search-records', function (req, res) {
 		sql = "SELECT * FROM records ORDER BY date DESC";
 	};
 
-	
-
 	connection.query(sql, function (err, rows, fields) {
     	if (err) throw err; 
     	res.render('pages/search-records', { results:rows });  
@@ -86,14 +84,6 @@ app.get('/get-record', function(req, res) {
 	});
 });
 
-//Get all outage reports
-app.get('/outages', function(req, res) {
-	connection.query("SELECT * FROM outages ORDER BY date DESC", function (err, rows, fields) {
-    		if (err) throw err; 
-    		res.render('pages/outages', { results:rows });
-  	});
-});
-
 //Search Filter reports by days - between 
 app.post('/filter-reports', function(req, res) {
 	var start = req.body.start;
@@ -106,9 +96,83 @@ app.post('/filter-reports', function(req, res) {
  
 });
 
+//search records filter results page
+app.get('/search-records', function (req, res) { 
+
+	start = req.session.start;
+	end = req.session.end;
+	//if start and no end
+    if (start && (!(end))) {
+		sql = "SELECT * FROM records WHERE date ='"+start+"' ORDER BY date DESC";
+	} 
+	//if end but no start
+	if(end && (!(start))) {
+		sql = "SELECT * FROM records WHERE date ='"+end+"' ORDER BY date DESC";	
+	} 
+	//if both start and end
+	if(start && end) {
+		sql = "SELECT * FROM records WHERE (date BETWEEN '"+start+"' AND '"+end+"') ORDER BY date DESC";
+	};
+
+	if( (!(start)) && (!(end))) {
+		sql = "SELECT * FROM records ORDER BY date DESC";
+	};
+
+	connection.query(sql, function (err, rows, fields) {
+    	if (err) throw err; 
+    	res.render('pages/search-records', { results:rows });  
+  	});
+ 
+});
+
+
+//Check if there are two outages in a day
+//Get all outage reports
+app.get('/outages', function(req, res) {
+	connection.query("SELECT * FROM outages ORDER BY date DESC", function (err, rows, fields) {
+    		if (err) throw err; 
+    		res.render('pages/outages', { results:rows });
+  	});
+});
+
 //Search Filter outages by days - between
 app.get('/filter-outages', function(req, res) {
-	console.log("hello");
+	var start = req.body.start;
+	var end = req.body.end;
+ 	//add to session data  
+ 	req.session.start = start; 
+ 	req.session.end = end;
+    //redirect to home
+	res.redirect('/search-outages');  
+});
+
+//Search filter outages results
+app.get('/search-outages', function (req, res) { 
+
+	start = req.session.start;
+	end = req.session.end;
+	//if start and no end
+    if (start && (!(end))) {
+		sql = "SELECT * FROM outages WHERE date ='"+start+"' ORDER BY date DESC";
+	} 
+	//if end but no start
+	if(end && (!(start))) {
+		sql = "SELECT * FROM outages WHERE date ='"+end+"' ORDER BY date DESC";	
+	} 
+	//if both start and end
+	if(start && end) {
+		sql = "SELECT * FROM outages WHERE (date BETWEEN '"+start+"' AND '"+end+"') ORDER BY date DESC";
+	};
+
+	if( (!(start)) && (!(end))) {
+		sql = "SELECT * FROM outages ORDER BY date DESC";
+	};
+
+	connection.query(sql, function (err, rows, fields) {
+    	if (err) throw err; 
+    	res.render('pages/search-outages', { results:rows });  
+  	});
+ 
 });
 
 //LOGIN MATCH

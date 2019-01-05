@@ -15,7 +15,7 @@
     <div>
         <h1>Search Records</h1>
 
-        <form method="post" action="/filter-reports"> 
+        <form method="post" action="/filter-outages"> 
 			   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
                <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
  
@@ -40,15 +40,13 @@
         <p>Last 20 Readings</p>
          <table class="table">
          <tr>
-          <th scope="col">Date</th> 
-          <th scope="col">Upload</th> 
-          <th scope="col">Download</th> 
+          <th scope="col">#</th>
+          <th scope="col">Date</th>  
          </tr>
          <% results.forEach(function(result) { %>
          <tr>
-           <td><%= result.date %></td>
-           <td> <%= result.upload %></td>
-           <td> <%= result.download %></td>
+           <td></td>
+           <td><%= result.date %></td> 
          </tr>
          <% }); %>
          </table>

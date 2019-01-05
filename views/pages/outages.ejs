@@ -12,8 +12,31 @@
 </header>
 
 <main>
-    <div class="jumbotron">
+    <div>
         <h1>Outages</h1>
+         <form method="post" action="/filter-outages"> 
+			   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+               <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+ 
+					<script type="text/javascript">
+					 $(function () {
+					  $(".flatpickr").flatpickr({
+					    enableTime: false
+					  });
+					});
+				   </script>  
+             		 
+			   <br/>  
+			   Start <input id="start" name="start" class="flatpickr">
+			   End <input id="end" name="end" class="flatpickr">
+
+			     <input type="submit" value="Go" class="btn btn-primary btn-md"/>
+			    
+
+			</form>
+
+
+        <hr> 
          <% results.forEach(function(result) { %>
            <li><%= result.date %>/ Upload:<%= result.upload %>/ Download:<%= result.download %></li>
          <% }); %>
