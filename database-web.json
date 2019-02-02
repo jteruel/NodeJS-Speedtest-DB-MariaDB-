@@ -1,0 +1,10 @@
+{
+  "dev": {
+    "driver": "mariadb",
+    "host": "localhost",
+    "port": "3307",
+    "user": "root",
+    "password": "",
+    "database": "speedtest_synology"
+  }
+}
