@@ -1,8 +1,8 @@
-var mysql = require('mysql');
+var mariadb = require('mariadb');
 //get variables from database.json
 var db = require('./database.json');
 
-connection = mysql.createConnection({
+connection = mariadb.createPool({
 		connectionLimit :10,
 	  	host: db.dev.host,
 	  	user: db.dev.user,
