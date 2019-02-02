@@ -11,7 +11,9 @@ var moment = require('moment');
 
 app.set('view engine', 'ejs'); 
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ 
+	extended: true  
+}));
 app.use(bodyParser.json()); 
 
 app.use(session({
@@ -26,7 +28,10 @@ current_time =moment().format('YYYY-MM-DD');
 
 // routing
 //Home
-app.get('/', function (req, res) { 
+app.get('/', function (req, res) {  
+	if(req.session.status != 1) {
+		res.redirect('/login');  
+	}
 
 	sql = "SELECT * FROM records ORDER BY date DESC";
 
@@ -39,7 +44,10 @@ app.get('/', function (req, res) {
 //RECORDS
 //create record
 app.get('/get-record', function (req, res) {
-
+	if(req.session.status != 1) {
+		res.redirect('/login');  
+	}
+	
 	test.on('data', data => { 
 	  	//variables    
 		isp = data.client.isp;
@@ -59,6 +67,10 @@ app.get('/get-record', function (req, res) {
 
 //Search Filter reports by days - between 
 app.post('/filter-reports', function(req, res) {
+	if(req.session.status != 1) {
+		res.redirect('/login');  
+	}
+	
 	var start = req.body.start;
 	var end = req.body.end;
  	//add to session data  
@@ -71,7 +83,10 @@ app.post('/filter-reports', function(req, res) {
 
 //search records filter results page
 app.get('/search-records', function (req, res) { 
-
+	if(req.session.status != 1) {
+		res.redirect('/login');  
+	}
+	
 	start = req.session.start;
 	end = req.session.end;
 	//if start and no end
@@ -101,6 +116,10 @@ app.get('/search-records', function (req, res) {
 //OUTAGES
 //Get all outage reports
 app.get('/outages', function(req, res) {
+	if(req.session.status != 1) {
+		res.redirect('/login');  
+	}
+	
 	connection.query("SELECT * FROM outages ORDER BY date DESC").then((rows) => { 
     	res.render('pages/outages', { results:rows });
   	}); 
@@ -108,6 +127,10 @@ app.get('/outages', function(req, res) {
 
 //Search Filter outages by days - between
 app.post('/filter-outages', function(req, res) {
+	if(req.session.status != 1) {
+		res.redirect('/login');  
+	}
+	
 	var start = req.body.start;
 	var end = req.body.end;
  	//add to session data  
@@ -119,7 +142,10 @@ app.post('/filter-outages', function(req, res) {
 
 //Search filter outages results
 app.get('/search-outages', function (req, res) { 
-
+	if(req.session.status != 1) {
+		res.redirect('/login');  
+	}
+	
 	start = req.session.start;
 	end = req.session.end;
 	//if start and no end
@@ -145,7 +171,31 @@ app.get('/search-outages', function (req, res) {
  
 });
 
+//LOGIN
+//login page
+app.get('/login', function(req, res) {
+	res.render('pages/login');
+});
 
+//signin
+app.post('/verify-user', function(req, res) {
+	username = req.body.username; 
+	password = req.body.password;  
+	sql = "SELECT * FROM users WHERE username ='"+username+"' AND password = '"+password+"'" ;
 
+	connection.query(sql).then((rows) => { 
+		if(rows.length==0) { 
+			res.redirect('/login');  
+		} else { 
+			req.session.status = 1;
+			res.redirect('/');  
+		}
+  	});
+});
+//logout
+app.get('/logout', function (req, res) {
+	req.session.destroy();
+	res.redirect('/');  
+});
 
 server.listen(3000); 
