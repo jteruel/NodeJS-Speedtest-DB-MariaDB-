@@ -5,6 +5,6 @@
     "port": "3307",
     "user": "root",
     "password": "",
-    "database": "speedtest_synology"
+    "database": "[ database name ]"
   }
 }
