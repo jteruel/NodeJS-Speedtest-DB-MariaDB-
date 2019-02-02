@@ -31,36 +31,30 @@ app.get('/', function (req, res) {
 	sql = "SELECT * FROM records ORDER BY date DESC";
 
 	connection.query(sql).then((rows) => { 
-          res.render('pages/index', { results:rows });
-         
-	 
+          res.render('pages/index', { results:rows }); 
   	});
  
 });
 
 //RECORDS
- 
-
-//Get a record reading
-//Note: Consider using a separate file to use cron tasks to execute this task
-app.get('/get-record', function(req, res) {
+//create record
+app.get('/get-record', function (req, res) {
 
 	test.on('data', data => { 
-  	//variables    
-	isp = data.client.isp;
-	isp_server = data.server.sponsor;
-	isp_client = data.client.isp; 
-	upload = data.speeds.upload;
-	download = data.speeds.download;  
-	//input to database
-	sql = "INSERT INTO records (isp, isp_server,isp_client,upload,download) VALUES ('" +isp +"','"+isp_server+"','"+isp_client+"','"+upload+"','"+download+"')"; 
-		connection.query(sql, function (err, result) {
-			if (err) throw err;
-	    	console.log("1 record inserted");
+	  	//variables    
+		isp = data.client.isp;
+		isp_server = data.server.sponsor;
+		isp_client = data.client.isp; 
+		upload = data.speeds.upload;
+		download = data.speeds.download;  
+	    //query
+	    sql = "INSERT INTO records (isp, isp_server,isp_client,upload,download) VALUES ('" +isp +"','"+isp_server+"','"+isp_client+"','"+upload+"','"+download+"')"; 
+    	connection.query(sql).then((rows) => { 
+    		console.log("1 record inserted");
 	    	//redirect to home
 	    	res.redirect('/'); 
-		}); 
-	});
+    	}); 
+    }); 
 });
 
 //Search Filter reports by days - between 
@@ -97,54 +91,23 @@ app.get('/search-records', function (req, res) {
 		sql = "SELECT * FROM records ORDER BY date DESC";
 	};
 
-	connection.query(sql, function (err, rows, fields) {
-    	if (err) throw err; 
+	connection.query(sql).then((rows) => { 
     	res.render('pages/search-records', { results:rows });  
   	});
  
 });
 
-//Outages
-//Check if there are two outages in a day
-//run at the end of each day
-app.get('/outage-check', function(req, res) { 
-	current = current_time;
-	connection.query("SELECT * FROM records WHERE isp IS NULL", function (err, rows, fields) {
-    	if (err) throw err;  
-		if(rows.length > 0) {
-			//for each result of a outage, input to database
-			rows.forEach(function(row) {
-				date = row.date;  
-				//convert the row date to timestamp format
-				newdate = moment(date).format('YYYY-MM-DD HH:mm:ss'); 
-				//input to database
-				sql = "INSERT INTO outages (date) VALUES ('"+newdate+"')"; 
-					connection.query(sql, function (err, result) {
-					if (err) throw err;
-    				console.log("1 record inserted");
-    				//redirect to home
-    				res.redirect('/outages'); 
-				}); 
 
-			});
-		} else {
-			//none found, return to home
-			res.redirect('/outages');  
-    	}
-  	})
-});
-
-
+//OUTAGES
 //Get all outage reports
 app.get('/outages', function(req, res) {
-	connection.query("SELECT * FROM outages ORDER BY date DESC", function (err, rows, fields) {
-		if (err) throw err; 
-		res.render('pages/outages', { results:rows });
-  	});
+	connection.query("SELECT * FROM outages ORDER BY date DESC").then((rows) => { 
+    	res.render('pages/outages', { results:rows });
+  	}); 
 });
 
 //Search Filter outages by days - between
-app.get('/filter-outages', function(req, res) {
+app.post('/filter-outages', function(req, res) {
 	var start = req.body.start;
 	var end = req.body.end;
  	//add to session data  
@@ -176,17 +139,12 @@ app.get('/search-outages', function (req, res) {
 		sql = "SELECT * FROM outages ORDER BY date DESC";
 	};
 
-	connection.query(sql, function (err, rows, fields) {
-    	if (err) throw err; 
+	connection.query(sql).then((rows) => { 
     	res.render('pages/search-outages', { results:rows });  
   	});
  
 });
 
-//LOGIN MATCH
-
-
-//LOGOUT
 
 
 
